@@ -27,18 +27,17 @@ password=PASSWORD' >> ~/.my.cnf
 
 ## Configuration
 
-Within the script you can set a few options.
+Within the script you can set the backup path
 
 ```
 h_path    # Backup path, default /backup/xtrabackup/${host}
-retention # Retention period in days, default 7
 ```
 
 ## Run
 
 Run it as follows:
 
-`$ ./innobackupex-remote.sh <origin-hostname>`
+`$ ./innobackupex-remote.sh <origin-hostname> [Incremental]`
 
 As you run it will store your backups in the destination-folder divided by dates.
 
