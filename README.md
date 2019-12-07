@@ -2,9 +2,7 @@
 Script to handle  full and incremental mysql backups using  xtrabackup/innobackupex
 
 ## Installation
-Get the latest relese of qpress and Xtrabackup and install it on the origin and recipient  system.
-
-<https://www.percona.com/downloads/Percona-XtraBackup-LATEST/>
+Get the latest relese of [qpress](http://www.quicklz.com/) and [Xtrabackup](https://www.percona.com/downloads/Percona-XtraBackup-LATEST/) and install it on the origin and recipient  system.
 
 Generate an SSH-key on the recipient-system without a passphrase.
 
@@ -39,7 +37,7 @@ Run it as follows:
 
 `$ ./innobackupex-remote.sh <origin-hostname> [Incremental]`
 
-As you run it will store your backups in the destination-folder divided by dates.
+Backups will be Full unless specified as Incremental. If the host is unknown the first backup will be Full regardless. As you run it will store your backups in the destination-folder divided by dates.
 
 ```
 $ find /backup/xtrabackup/ -maxdepth 2
@@ -57,4 +55,4 @@ All backups are compressed with qp, to do a recovery you need to uncompress thes
 
 `$ innobackupex --decompress <backupfolder>`
 
-To perform a full restore please refer to <https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/incremental_backups_innobackupex.html#preparing-an-incremental-backup-with-innobackupex>
+To perform a full restore refer to <https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/incremental_backups_innobackupex.html#preparing-an-incremental-backup-with-innobackupex>
