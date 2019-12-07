@@ -47,7 +47,8 @@ fi
 cp ${b_path}/${today}/xtrabackup_checkpoints ${b_path}/${today}.checkpoints
 
 if [[ "$gzip" == "true" ]]; then
-    tar -C ${b_path} -zcf ${today}.tar.gz ${today}
+    cd ${b_path}
+    tar -zcf ${today}.tar.gz ${today}
     rm -fr ${b_path}/${today}
 fi
 

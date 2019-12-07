@@ -39,7 +39,7 @@ gzip      # Compress backups, default true
 
 Run it as follows:
 
-`$ ./innobackupex-remote.sh <hostname>`
+`$ ./innobackupex-remote.sh <origin-hostname>`
 
 As you run it will generate a few files
 
