@@ -40,29 +40,22 @@ Run it as follows:
 
 `$ ./innobackupex-remote.sh <origin-hostname>`
 
-As you run it will generate a few files
+As you run it will store your backups in the destination-folder divided by dates.
 
 ```
-$ cd /backup/xtrabackup/
-$ find .
-.
-./origin-hostname
-./origin-hostname/2019-12-06.tar.gz
-./origin-hostname/2019-12-06.log
-./origin-hostname/2019-12-06.checkpoints
-./origin-hostname/2019-12-07.log
-./origin-hostname/2019-12-07.checkpoints
-./origin-hostname/2019-12-07.tar.gz
+$ find /backup/xtrabackup/ -maxdepth 2
+/backup/xtrabackup/
+/backup/xtrabackup/origin-hostname
+/backup/xtrabackup/origin-hostname/2019-12-06
+/backup/xtrabackup/origin-hostname/2019-12-07
 ```
 
-The tar.gz will contain your backups. The log-files contains the xtrabackup log output and the checkpoint-files will contain information about the given backup and LSN ID for managing incremental backups.
+Within the folders you'll also find the `xtrabackup.log` which  contains the output of the backup-operation.
 
-```
-$ cat ./origin-hostname/2019-12-07.checkpoints
-backup_type = incremental
-from_lsn = 150458875511
-to_lsn = 150458875685
-last_lsn = 150458875685
-compact = 0
-recover_binlog_info = 0
-```
+## Recover
+
+All backups are compressed with qp, to do a recovery you need to uncompress these first.
+
+`$ innobackupex --decompress <backupfolder>`
+
+To perform a full restore please refer to <https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/incremental_backups_innobackupex.html#preparing-an-incremental-backup-with-innobackupex>
