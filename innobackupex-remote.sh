@@ -1,54 +1,33 @@
 #!/bin/bash
-set -o pipefail
+set  -o pipefail
 host=$1
-b_path="/backup/xtrabackup/${host}"
-retention=7
-level="full"
 today=$(date +%Y-%m-%d)
-gzip="true"
+h_path="/backup/xtrabackup/${host}"
+b_path="${h_path}/${today}"
+retention=7
 
-if [[ ! -d $b_path ]]; then
-    mkdir -p $b_path
-fi
-
-ssh -q -l mysql -T $host 2> /dev/null
-if [ $? -ne 1 ]; then
-    echo "Unable to connect to ${host}"
-    exit 1
-fi
-
-latest=$(ls -td $b_path/*.checkpoints -- 2> /dev/null | head -n1)
-l_type=$(grep backup_type ${latest} 2> /dev/null | awk '{ print $NF }')
-if [[ "$l_type" == "incremental" || "$l_type" == "full-backuped" ]]; then
-    start_time=$(date -d "$(grep -Po "^start_time = \K.*" ${latest})" "+%s")
-    retention=$(date -d "${retention} days ago" "+%s")
-    if  [[ $start_time -gt $retention ]]; then
-    level="incr"
-    fi
-fi
-
-if [[ ! -e ${b_path}/${today}.tar.gz ]]; then
-    mkdir -p ${b_path}/${today}
+if [[ ! -d ${b_path} ]]; then
+    mkdir -p ${b_path}
 else
     echo "Backup already taken today!"
     exit 1
 fi
 
-exec &>> ${b_path}/${today}.log
+latest=$(ls -td $h_path/* -- 2> /dev/null | head -n1)
+if [[ $latest ]]; then
+    start_time=$(date -d "$(grep -Po "^start_time = \K.*" ${latest}/xtrabackup_checkpoints)" "+%s")
+    retention=$(date -d "${retention} days ago" "+%s")
+    if  [[ $start_time -gt $retention ]]; then
+	level="incr"
+    fi
+fi
+
+exec &>> ${b_path}.log
 echo  "Starting $level backup"
 
 if [[ "$level" == "incr" ]]; then
-    lsn=$(grep -Po "^to_lsn = \K.*" ${latest})
-    ssh mysql@${host} " --slave-info --safe-slave-backup --no-timestamp --stream=xbstream --incremental /tmp/${today}_mysqlxtrabackup/ --incremental-lsn=${lsn}" | xbstream -x -C ${b_path}/${today}/
+    lsn=$(grep -Po "^to_lsn = \K.*" ${latest}/xtrabackup_checkpoints)
+    ssh mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream --incremental /tmp/${today}_mysqlxtrabackup/ --incremental-lsn=${lsn}" | xbstream -x -C ${b_path}/
 else
-    ssh mysql@${host} " --slave-info --safe-slave-backup --no-timestamp --stream=xbstream /tmp/${today}_mysqlxtrabackup" | xbstream -x -C ${b_path}/${today}/
+    ssh mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream /tmp/${today}_mysqlxtrabackup" | xbstream -x -C ${b_path}/
 fi
-
-cp ${b_path}/${today}/xtrabackup_checkpoints ${b_path}/${today}.checkpoints
-
-if [[ "$gzip" == "true" ]]; then
-    cd ${b_path}
-    tar -zcf ${today}.tar.gz ${today}
-    rm -fr ${b_path}/${today}
-fi
-
