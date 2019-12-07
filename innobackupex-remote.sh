@@ -8,7 +8,7 @@ retention=7
 
 latest=$(ls -td $h_path/* -- 2> /dev/null | head -n1)
 if [[ $latest ]]; then
-    start_time=$(date -d "$(grep -Po "^start_time = \K.*" ${latest}/xtrabackup_checkpoints)" "+%s")
+    start_time=$(date -d "$(qpress -do ${latest}/xtrabackup_info.qp | grep -Po "^start_time = \K.*")" "+%s")
     retention=$(date -d "${retention} days ago" "+%s")
     if  [[ $start_time -gt $retention ]]; then
 level="incr"

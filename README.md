@@ -2,7 +2,7 @@
 Script to handle  full and incremental mysql backups using  xtrabackup/innobackupex
 
 ## Installation
-Get the latest relese of Xtrabackup and install it on the origin and recipient  system.
+Get the latest relese of qpress and Xtrabackup and install it on the origin and recipient  system.
 
 <https://www.percona.com/downloads/Percona-XtraBackup-LATEST/>
 
@@ -50,7 +50,7 @@ $ find /backup/xtrabackup/ -maxdepth 2
 /backup/xtrabackup/origin-hostname/2019-12-07
 ```
 
-Within the folders you'll also find the `xtrabackup.log` which  contains the output of the backup-operation.
+Within the folders you'll also find the `xtrabackup.log` which contains the output of the backup-operation.
 
 ## Recover
 
