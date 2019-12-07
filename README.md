@@ -14,17 +14,16 @@ $ sudo su - xtrabackup
 $ ssh-keygen -b 4096 -t rsa -f /tmp/sshkey -q -N ""
 ```
 
-Add the public key and limitations to the mysql-user on the origin system ~/authorized_keys
+Add the public key and limitations to the mysql-user on the origin system *~/.ssh/authorized_keys*
 `command="/usr/bin/innobackupex $SSH_ORIGINAL_COMMAND",no-port-forwarding,no-x11-forwarding,no-agent-forwarding key_type key`
 
-Create a .my.cnf file for the mysql user on the origin system
+Create a *.my.cnf* file for the mysql user on the origin system
 
 ```
 $ echo '[client]
 user=USERNAME
-password=PASSWORD'
+password=PASSWORD' >> ~/.my.cnf
 ```
-Clone this repo and set `chmod +x innobackex-remote.sh`
 
 ## Configuration
 
