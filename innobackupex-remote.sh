@@ -41,7 +41,7 @@ if [[ "$level" == "incr" ]]; then
     lsn=$(grep -Po "^to_lsn = \K.*" ${latest})
     ssh mysql@${host} " --slave-info --safe-slave-backup --no-timestamp --stream=xbstream --incremental /tmp/${today}_mysqlxtrabackup/ --incremental-lsn=${lsn}" | xbstream -x -C ${b_path}/${today}/
 else
-    ssh mysql@${host} "innobackupex --slave-info --safe-slave-backup --no-timestamp --stream=xbstream /tmp/${today}_mysqlxtrabackup" | xbstream -x -C ${b_path}/${today}/
+    ssh mysql@${host} " --slave-info --safe-slave-backup --no-timestamp --stream=xbstream /tmp/${today}_mysqlxtrabackup" | xbstream -x -C ${b_path}/${today}/
 fi
 
 cp ${b_path}/${today}/xtrabackup_checkpoints ${b_path}/${today}.checkpoints
