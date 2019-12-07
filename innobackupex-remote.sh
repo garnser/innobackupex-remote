@@ -1,5 +1,5 @@
 #!/bin/bash
-set  -o pipefail
+set -o pipefail
 host=$1
 today=$(date +%Y-%m-%d)
 h_path="/backup/xtrabackup/${host}"

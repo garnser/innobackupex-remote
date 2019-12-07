@@ -30,9 +30,8 @@ password=PASSWORD' >> ~/.my.cnf
 Within the script you can set a few options.
 
 ```
-b_path    # Backup path, default /backup/xtrabackup/${host}
+h_path    # Backup path, default /backup/xtrabackup/${host}
 retention # Retention period in days, default 7
-gzip      # Compress backups, default true
 ```
 
 ## Run
