@@ -19,9 +19,9 @@ fi
 
 exec &>> ${b_path}/xtrabackup.log
 if [[ "$level" == "Incremental" ]]; then
-    latest=$(ls -td $h_path/* -- 2> /dev/null | head -n1)
+    latest=$(ls -td $h_path/* -- 2> /dev/null | sed -n '2p')
     lsn=$(grep -Po "^to_lsn = \K.*" ${latest}/xtrabackup_checkpoints)
-    ssh mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream --incremental /tmp/${today}_mysqlxtrabackup/ --incremental-lsn=${lsn}" | xbstream -x -C ${b_path}/
+    ssh -o SendEnv=lsn mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream --incremental /tmp/${today}_mysqlxtrabackup/ --incremental-lsn=${lsn}" | xbstream -x -C ${b_path}/
 else
     ssh mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream /tmp/${today}_mysqlxtrabackup" | xbstream -x -C ${b_path}/
 fi
