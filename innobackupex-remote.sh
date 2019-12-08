@@ -2,9 +2,8 @@
 set -o pipefail
 host=$1
 level=$2
-today=$(date +%Y-%m-%d_%H)
 h_path="/backup/xtrabackup/${host}"
-b_path="${h_path}/${today}"
+b_path="${h_path}/"$(date +%Y-%m-%d_%H)
 
 if [[ ! -d ${b_path} ]]; then
     mkdir -p ${b_path}
@@ -21,4 +20,4 @@ if [[ "$level" == "Incremental" && -n $lsn ]]; then
 fi
 
 exec &>> ${b_path}/xtrabackup.log
-ssh mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream ${incremental} /tmp/${today}_mysqlxtrabackup" | xbstream -x -C ${b_path}/
+ssh mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream ${incremental} /tmp/mysqlxtrabackup" | xbstream -x -C ${b_path}/
