@@ -1,13 +1,20 @@
 #!/bin/bash
 set -o pipefail
 host=$1
+level=$2
 h_path="/backup/xtrabackup/${host}"
 b_path="${h_path}/"$(date +%Y-%m-%d_%H)
 
-mkdir -p ${b_path} 2> /dev/null || (echo "Backup already taken!" && exit 1)
+if [ -d ${b_path} ]; then
+    echo "Backup already taken!"
+    exit 1
+fi
+
+mkdir -p ${b_path}
 
 lsn=$(grep -Po "^to_lsn = \K.*" $(ls -td $h_path/* -- 2> /dev/null | sed -n '2p')/xtrabackup_checkpoints)
-if [[ "$2" == "Incremental" && -n $lsn ]]; then
+
+if [[ "$level" == "Incremental" && -n $lsn ]]; then
     incremental="--incremental --incremental-lsn=${lsn}"
 fi
 
