@@ -12,4 +12,4 @@ if [[ "$2" == "Incremental" && -n $lsn ]]; then
 fi
 
 exec &>> ${b_path}/xtrabackup.log
-ssh mysql@${host} " --compress --slave-info --safe-slave-backup --no-timestamp --stream=xbstream ${incremental} /tmp/mysqlxtrabackup" | xbstream -x -C ${b_path}/
+ssh mysql@${host} " --compress --slave-info --safe-slave-backup --stream=xbstream ${incremental} /tmp/mysqlxtrabackup" | xbstream -x -C ${b_path}/
