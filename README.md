@@ -30,6 +30,7 @@ Within the script you can set the backup path
 ```
 h_path    # Backup path, default /backup/xtrabackup/${host}
 f_freq    # Full backup frequency
+retention # Retentionperiod
 ```
 
 ## Run
