@@ -2,6 +2,7 @@
 set -o pipefail
 host=$1
 level=$2
+f_freq=7
 h_path="/backup/xtrabackup/${host}"
 b_path="${h_path}/"$(date +%Y-%m-%d_%H)
 
@@ -11,6 +12,11 @@ if [ -d ${b_path} ]; then
 fi
 
 mkdir -p ${b_path}
+
+find ${h_path} -maxdepth 2 -mtime -${f_freq} -name "xtrabackup_checkpoints" | xargs grep -q 'from_lsn = 0'
+if [[ $?-ne 0 ]]; then
+    level="Full"
+fi
 
 lsn=$(grep -Po "^to_lsn = \K.*" $(ls -td $h_path/* -- 2> /dev/null | sed -n '2p')/xtrabackup_checkpoints)
 

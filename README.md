@@ -29,6 +29,7 @@ Within the script you can set the backup path
 
 ```
 h_path    # Backup path, default /backup/xtrabackup/${host}
+f_freq    # Full backup frequency
 ```
 
 ## Run
@@ -37,7 +38,7 @@ Run it as follows:
 
 `$ ./innobackupex-remote.sh <origin-hostname> [Incremental]`
 
-Backups will be Full unless specified as Incremental. If the host is unknown the first backup will be Full regardless. As you run it will store your backups in the destination-folder divided by dates and hours.
+Backups will be Full unless specified as Incremental. If the host is unknown or if there hasn't been a full backup since `f_freq` days ago the backup will be Full. As you run it will store your backups in the destination-folder divided by dates and hours.
 
 ```
 $ find /backup/xtrabackup/ -maxdepth 2
