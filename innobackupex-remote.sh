@@ -13,7 +13,7 @@ fi
 
 mkdir -p ${b_path}
 
-find ${h_path} -maxdepth 2 -mtime -${f_freq} -name "xtrabackup_checkpoints" | xargs grep -q 'from_lsn = 0'
+find ${h_path} -maxdepth 2 -ctime -${f_freq} -name "xtrabackup_checkpoints" | xargs grep -q 'from_lsn = 0'
 if [[ $?-ne 0 ]]; then
     level="Full"
 fi
