@@ -26,13 +26,14 @@ if [[ "$level" == "Incremental" && -n $lsn ]]; then
 fi
 
 exec &>> ${b_path}/xtrabackup.log
-ssh mysql@${host} " --compress --slave-info --safe-slave-backup --stream=xbstream ${incremental} /tmp/mysqlxtrabackup" | xbstream -x -C ${b_path}/
+ssh -o StrictHostKeyChecking=no mysql@${host} " --compress --slave-info --safe-slave-backup --stream=xbstream ${incremental} /tmp/mysqlxtrabackup" | xbstream -x -C ${b_path}/
 
-p_ret=$(find ${h_path} -maxdepth 2 -ctime +${retention} -name "xtrabackup_checkpoints" | xargs grep -l 'from_lsn = 0' | head -n -1 | wc -l)
-if [[ $p_ret -ge 1 ]]; then
-    closest=$(find ${h_path} -maxdepth 2 -ctime +${retention} -name "xtrabackup_checkpoints" | xargs grep -l 'from_lsn = 0' | tail -n 1)
+p_ret=$(find ${h_path} -maxdepth 2 -ctime +${retention} -name "xtrabackup_checkpoints" | xargs grep -l 'from_lsn = 0')
+if [[ $( echo $p_ret | wc -w) -ge 2 ]]; then
+    closest=$(find ${h_path} -maxdepth 2 -ctime +${retention} -name "xtrabackup_checkpoints" | xargs ls -r | xargs grep -l 'from_lsn = 0' | head -n 1)
     c_ts=$(date -d "$(stat ${closest} | grep -Po 'Change: \K[0-9-]+ [0-9:]+')" "+%s")
-    ret_rm=$(echo "$(( ($(date "+%s") - $(date -d "$(stat ${closest} | grep -Po 'Change: \K[0-9-]+ [0-9:]+')" "+%s")) / 86400 ))"
-    # NOT TESTED, USE WITH EXTREME CAUTION!!
-    #find ${h_path} -maxdepth 1 -ctime +${ret_rm} | xargs rm -fr
+    ret_rm=$(echo $(( ($(date "+%s") - $(date -d "$(stat ${closest} | grep -Po 'Change: \K[0-9-]+ [0-9:]+')" "+%s")) / 86400 )))
+    echo "Removing: "
+    find ${h_path} -maxdepth 1 -ctime +${ret_rm}
+    find ${h_path} -maxdepth 1 -ctime +${ret_rm} | xargs rm -fr
 fi
