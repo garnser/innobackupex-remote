@@ -56,4 +56,6 @@ Within the folders you'll also find the `xtrabackup.log` which contains the outp
 The recover process will identify the last available full backup and apply any potential incremental backups.
 The script expects docker to be present on the system. Once run a docker instance will be made available on localhost:3306
 
+```
 ./restoredb.sh /backup/xtrabackup/origin-hostname/YYYY-MM-DD-HH
+```
